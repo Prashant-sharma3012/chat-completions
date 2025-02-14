@@ -19,8 +19,7 @@ export const chatWithAgent = async (req, res) => {
         messages: [{ role: "assistant", content: systemPrompt }, ...chatContext, {
             role: "user",
             content: req.body.message
-        }],
-        store: true,
+        }]
     });
 
     chatContext = [...chatContext, { role: "user", content: req.body.message }, completion.choices[0].message];
