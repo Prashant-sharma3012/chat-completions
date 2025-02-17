@@ -1,7 +1,7 @@
 // Step 1: Import the Express module
 import express from 'express';
 import bodyParser from 'body-parser';
-import { chatWithAgent } from './chat.mjs';
+import { chatWithAgent, chatWithTools, getChatById } from './chat.js';
 import pino from 'pino-http'
 
 // Step 2: Create an instance of an Express application
@@ -15,6 +15,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/chat', chatWithAgent);
+app.post('/chat/tools', chatWithTools);
+app.get('/chat/:id', getChatById)
 
 // Step 4: Make the server listen on a specified port
 const PORT = process.env.PORT || 3000;
