@@ -1,8 +1,8 @@
 import OpenAI from "openai";
 import { Request, Response } from "express";
 import pino from 'pino'
-import { tools } from "./tools/tool-call-v2";
-import { getChatFromStore, saveChat, updateChat } from './service/conversation.history'
+import { tools } from "../tools/examples/tool-call-v2";
+import { getChatFromStore, saveChat, updateChat } from '../service/conversation.history'
 import { ChatCompletionMessageParam } from 'openai/resources/chat';
 
 const openai = new OpenAI();
@@ -50,8 +50,14 @@ export async function chatWithTools(req: Request, res: Response) {
   ]
 
   if (id) {
-    chatContext = getChatFromStore(id).messages;
+    chatContext = [
+      ...getChatFromStore(id).messages,
+      { role: 'user', content: message }
+    ]
   }
+
+  log.info("chatContext: ")
+  log.info(chatContext)
 
   const runner = await openai.beta.chat.completions
     .runTools({
@@ -76,12 +82,18 @@ export async function chatWithTools(req: Request, res: Response) {
   if (!id) {
     saveChat(result.id, [
       ...chatContext,
-      result.choices[0].message
+      {
+        role: result.choices[0].message.role,
+        content: result.choices[0].message.content
+      }
     ])
   } else {
     updateChat(id, [
       ...chatContext,
-      result.choices[0].message
+      {
+        role: result.choices[0].message.role,
+        content: result.choices[0].message.content
+      }
     ])
   }
 
@@ -90,6 +102,5 @@ export async function chatWithTools(req: Request, res: Response) {
 
 export async function getChatById(req: Request, res: Response) {
   const id = req.params.id;
-  const result = await openai.chat.completions.retrieve(id);
-  res.json(result);
+  res.json(getChatFromStore(id));
 }

@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
-import { ChatCompletionMessage, ChatCompletionMessageParam } from 'openai/resources/chat';
+import { ChatCompletionMessage, ChatCompletionCreateParams } from 'openai/resources/chat';
 
 const openai = new OpenAI();
 
-export const tools: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
+export const tools: ChatCompletionCreateParams.Function[] = [
   {
     name: 'list',
     description: 'list queries books by genre, and returns a list of names of books',
